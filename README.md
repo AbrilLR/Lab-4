@@ -1,5 +1,47 @@
 # Señales electromiográficas EMG
-## Descripción
+## Descripción 
+La electromiografía de superficie (sEMG) es una técnica no invasiva que permite registrar la actividad eléctrica generada por los músculos durante la contracción voluntaria. Esta señal refleja la activación de unidades motoras y puede ser utilizada para evaluar el comportamiento muscular bajo diferentes condiciones, como la aparición de fatiga.
+
+En esta práctica se busca evaluar experimentalmente el fenómeno de la fatiga muscular mediante el registro y análisis de señales EMG en el músculo del antebrazo, durante una contracción repetitiva y constante de 30 segundos. A lo largo de este tiempo, se observarán variaciones en la amplitud y el contenido frecuencial de la señal, características típicas del proceso de fatiga.
+
+Para poder analizar la señal EMG, se implementa el uso de filtros digitales para eliminar el ruido. Además, se utiliza aventanamiento para dividir la señal en segmentos temporales sobre los que se aplica el análisis, permitiendo observar la evolución temporal de sus características. Finalmente, se realiza un análisis espectral mediante la Transformada Rápida de Fourier (FFT), con el fin de estudiar cómo cambia el contenido en frecuencia a lo largo del tiempo, lo cual puede indicar si hay fatiga muscular.
+
+## Captura de la señal 
+Para el proceso de adquisición de la señal de electromiografía seleccionamos el músculo del antebrazo, en este se colocaron los electrodos siendo dos de ellos electrodos activos y un electrodo de tierra.
+Los electrodos fueron conectados al módulo de electromiografía AD8232, el cual actúa como un sistema de amplifiacación y filtrado de la señal. 
+Se connectó el módulo de electromiografia al modulo de adquisición de datos NI-DAQ el cual permite la adqusición de datos de la señal de EMG.
+Con el siguiente código se estableció una frecuencia de muestreo de 1000 Hz, ya que la señal máxima de una electromiografiía, utilizando una frecuencia de muestreo de 1000 Hz aseguramos el cumplimiento teorema de Nyquist. El código también permite graficar y guardar los datos de la señal en un archivo CSV para su posterior análisis.
+
+```python
+def iniciar_adquisicion(self):
+        device_name = self.puertos_combo.currentText()
+        if not device_name:
+            QMessageBox.warning(self, "Error", "Selecciona un dispositivo DAQ antes de iniciar la adquisición.")
+            return
+
+        self.archivo_tdms = "TestData.tdms"
+        self.duracion = 30  
+        self.frecuencia_muestreo = 1000  
+        total_muestras = self.duracion * self.frecuencia_muestreo
+
+        try:
+            with nidaqmx.Task() as task:
+                task.ai_channels.add_ai_voltage_chan(f"{device_name}/ai0")
+                task.timing.cfg_samp_clk_timing(
+                    self.frecuencia_muestreo,
+                    sample_mode=AcquisitionType.FINITE,
+                    samps_per_chan=total_muestras
+                )
+
+                task.start()
+                datos = task.read(number_of_samples_per_channel=total_muestras, timeout=nidaqmx.constants.WAIT_INFINITELY)
+                task.stop()
+
+            self.procesar_datos(datos)
+        except Exception as e:
+            QMessageBox.critical(self, "Error", f"Error durante la adquisición de datos:\n{e}")
+
+```
 
 ## Filtrado de la señal
 Para eliminar componentes de la señal que no están relacionados con la actividad múscular se aplican dos tipos de filtros, un filtro pasa bajos atenua altas frecuencias que pueden corresponder a ruido electromagnético o interferencias y un filtro pasa altos para eliminar componentes de baja frecuencia, generalmente asociados a la linea base o al movimiento.
