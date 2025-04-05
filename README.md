@@ -63,7 +63,16 @@ def butter_highpass(cutoff, fs, order=5):
     normal_cutoff = cutoff / nyq
     b, a = butter(order, normal_cutoff, btype='high', analog=False)
     return b, a
+def butter_highpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_highpass(cutoff, fs, order)
+    y = lfilter(b, a, data)
+    return y
+
+filtered_signal_low = butter_lowpass_filter(emg_signal, high_cutoff, sampling_rate)
+filtered_signal_band = butter_highpass_filter(filtered_signal_low, low_cutoff, sampling_rate)
+
 ```
+![image](https://github.com/user-attachments/assets/f9c9e537-395a-4790-bb27-ca431dcdc490)
 
 # Ventana miento de la señal EMG
 Para el analisis de los pulsos generados por contracción muscular se pidió al sujeto de prueba que hiciera contracciones de manera periodica durante 30 segundos, esto nos permite analizar la señal de manera más facil, esta se divide en ventanas para analizar cada contracción individualmente, para esto se aplica una ventana Hamming en vez de una Hanning, debido a que reduce las fugas espectrales, tiene mejor supresión de lobulos laterales, y es mejor para señales periodicas, cada vetana se aplica en un periodo de aproximadamente 682ms para 44 ventanas, correspondiente a las 44 contracciones que se hicieron en 30 segundos. Posteriormente se aplica transformada de fourier (FFT) y tambien se calcula y gráfica la densidad espectral de potencia, por propositos de facilidad solo se mostrarán las ventanas 1, 22 y 44, además se calcula la frecuencia media, mediana y desviación estandar para cada una de las ventanas.
@@ -173,15 +182,3 @@ Ventana 43 - Frecuencia Media: 128.98 Hz, Mediana: 104.25 Hz, Desviación están
 Ventana 44 - Frecuencia Media: 102.73 Hz, Mediana: 80.76 Hz, Desviación estándar: 82.55 Hz
 
 Para el analisis de la fátiga, normalmente se usa la frecuencia mediana, debido a que en estadistica, cuando una distribución de datos se encuentra sesgada hacía un lateral, la mediana de la distribución de datos disminuye hacia esa misma dirección, además esta disminución de la mediana es consistente y proporcional, la media a pesar de que tambien disminuye es más sensible a artefactos y presencia de picos y frecuencias altas. Tomando la frecuencia mediana podemos observar una disminución considerable en la frecuencia mediana, que a pesar de tener su mayor disminución en la ventana 34 (probablemente debidoa que el ventaneo periodico puede dejar fuera ciertos valores) mantiene una relación consistente hasta el final, por que se puede concluir que la disminución de la frecuencia mediana claramente se relaciona con la fatiga en la señal emg, y es util a la hora de determinarla cuando el analisis visual o espectral no es suficiente para que la fatiga sea observable.
-
-
-def butter_highpass_filter(data, cutoff, fs, order=5):
-    b, a = butter_highpass(cutoff, fs, order)
-    y = lfilter(b, a, data)
-    return y
-
-filtered_signal_low = butter_lowpass_filter(emg_signal, high_cutoff, sampling_rate)
-filtered_signal_band = butter_highpass_filter(filtered_signal_low, low_cutoff, sampling_rate)
-
-```
-![image](https://github.com/user-attachments/assets/f9c9e537-395a-4790-bb27-ca431dcdc490)
