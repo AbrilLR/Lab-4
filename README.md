@@ -188,3 +188,9 @@ Ventana 43 - Frecuencia Media: 128.98 Hz, Mediana: 104.25 Hz, Desviación están
 Ventana 44 - Frecuencia Media: 102.73 Hz, Mediana: 80.76 Hz, Desviación estándar: 82.55 Hz
 
 Para el analisis de la fátiga, normalmente se usa la frecuencia mediana, debido a que en estadistica, cuando una distribución de datos se encuentra sesgada hacía un lateral, la mediana de la distribución de datos disminuye hacia esa misma dirección, además esta disminución de la mediana es consistente y proporcional, la media a pesar de que tambien disminuye es más sensible a artefactos y presencia de picos y frecuencias altas. Tomando la frecuencia mediana podemos observar una disminución considerable en la frecuencia mediana, que a pesar de tener su mayor disminución en la ventana 34 (probablemente debidoa que el ventaneo periodico puede dejar fuera ciertos valores) mantiene una relación consistente hasta el final, por que se puede concluir que la disminución de la frecuencia mediana claramente se relaciona con la fatiga en la señal emg, y es util a la hora de determinarla cuando el analisis visual o espectral no es suficiente para que la fatiga sea observable.
+
+###  Prueba de hipótesis 
+
+ Herramienta estadística que se utiliza para determinar si existe una diferencia significativa entre dos conjuntos de datos o condiciones. Se basa en comparar dos hipótesis: la hipótesis nula, que plantea que no hay diferencia entre los grupos, y la hipótesis alternativa, que sugiere que sí hay una diferencia. 
+ A través del cálculo de un estadístico de prueba y un valor p, se evalúa la probabilidad de que los resultados observados se deban al azar. Si el valor p es menor a un umbral típico (como 0.05), se rechaza la hipótesis nula y se concluye que la diferencia es estadísticamente significativa. Esta prueba permite evaluar si la actividad muscular ha cambiado significativamente entre el inicio y el final de una medición.
+
