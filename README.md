@@ -210,11 +210,9 @@ if len(frecuencias_medias) >= 10:
     print(f"Valor p: {p_value:.4f}")
 
     if p_value < 0.05:
-        print("→ Se rechaza la hipótesis nula: hay diferencia significativa entre el inicio y el final.")
+        print("Se rechaza la hipótesis nula: hay diferencia significativa entre el inicio y el final.")
     else:
-        print("→ No se rechaza la hipótesis nula: no hay diferencia significativa entre el inicio y el final.")
-else:
-    print("No hay suficientes ventanas para realizar la prueba de hipótesis.")
+        print("No se rechaza la hipótesis nula: no hay diferencia significativa entre el inicio y el final.")
 
 ```
 
