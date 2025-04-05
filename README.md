@@ -6,42 +6,48 @@ En esta práctica se busca evaluar experimentalmente el fenómeno de la fatiga m
 
 Para poder analizar la señal EMG, se implementa el uso de filtros digitales para eliminar el ruido. Además, se utiliza aventanamiento para dividir la señal en segmentos temporales sobre los que se aplica el análisis, permitiendo observar la evolución temporal de sus características. Finalmente, se realiza un análisis espectral mediante la Transformada Rápida de Fourier (FFT), con el fin de estudiar cómo cambia el contenido en frecuencia a lo largo del tiempo, lo cual puede indicar si hay fatiga muscular.
 
-## Captura de la señal 
+## Captura de la señal
 Para el proceso de adquisición de la señal de electromiografía seleccionamos el músculo del antebrazo, en este se colocaron los electrodos siendo dos de ellos electrodos activos y un electrodo de tierra.
-Los electrodos fueron conectados al módulo de electromiografía AD8232, el cual actúa como un sistema de amplifiacación y filtrado de la señal. 
+Los electrodos fueron conectados al módulo de electromiografía AD8232, el cual actúa como un sistema de amplifiacación y filtrado de la señal.
 Se connectó el módulo de electromiografia al modulo de adquisición de datos NI-DAQ el cual permite la adqusición de datos de la señal de EMG.
 Con el siguiente código se estableció una frecuencia de muestreo de 1000 Hz, ya que la señal máxima de una electromiografiía, utilizando una frecuencia de muestreo de 1000 Hz aseguramos el cumplimiento teorema de Nyquist. El código también permite graficar y guardar los datos de la señal en un archivo CSV para su posterior análisis.
 
 ```python
 def iniciar_adquisicion(self):
-        device_name = self.puertos_combo.currentText()
-        if not device_name:
-            QMessageBox.warning(self, "Error", "Selecciona un dispositivo DAQ antes de iniciar la adquisición.")
-            return
+device_name = self.puertos_combo.currentText()
+if not device_name:
+QMessageBox.warning(self, "Error", "Selecciona un dispositivo DAQ antes de iniciar la adquisición.")
+return
 
-        self.archivo_tdms = "TestData.tdms"
-        self.duracion = 30  
-        self.frecuencia_muestreo = 1000  
-        total_muestras = self.duracion * self.frecuencia_muestreo
+self.archivo_tdms = "TestData.tdms"
+self.duracion = 30
+self.frecuencia_muestreo = 1000
+total_muestras = self.duracion * self.frecuencia_muestreo
 
-        try:
-            with nidaqmx.Task() as task:
-                task.ai_channels.add_ai_voltage_chan(f"{device_name}/ai0")
-                task.timing.cfg_samp_clk_timing(
-                    self.frecuencia_muestreo,
-                    sample_mode=AcquisitionType.FINITE,
-                    samps_per_chan=total_muestras
-                )
+try:
+with nidaqmx.Task() as task:
+task.ai_channels.add_ai_voltage_chan(f"{device_name}/ai0")
+task.timing.cfg_samp_clk_timing(
+self.frecuencia_muestreo,
+sample_mode=AcquisitionType.FINITE,
+samps_per_chan=total_muestras
+)
 
-                task.start()
-                datos = task.read(number_of_samples_per_channel=total_muestras, timeout=nidaqmx.constants.WAIT_INFINITELY)
-                task.stop()
+task.start()
+datos = task.read(number_of_samples_per_channel=total_muestras, timeout=nidaqmx.constants.WAIT_INFINITELY)
+task.stop()
 
-            self.procesar_datos(datos)
-        except Exception as e:
-            QMessageBox.critical(self, "Error", f"Error durante la adquisición de datos:\n{e}")
+self.procesar_datos(datos)
+except Exception as e:
+QMessageBox.critical(self, "Error", f"Error durante la adquisición de datos:\n{e}")
 
 ```
+![image](https://github.com/user-attachments/assets/2e2493f3-a1f1-4f9d-8cec-17b1703867c7)
+
+La captura durante 30 segundos con el módulo de electromiografia dió como resultado la siguente señal
+
+![emg](https://github.com/user-attachments/assets/62e6fe40-d95b-4216-8668-4e7759d804ff)
+
 
 ## Filtrado de la señal
 Para eliminar componentes de la señal que no están relacionados con la actividad múscular se aplican dos tipos de filtros, un filtro pasa bajos atenua altas frecuencias que pueden corresponder a ruido electromagnético o interferencias y un filtro pasa altos para eliminar componentes de baja frecuencia, generalmente asociados a la linea base o al movimiento.
@@ -72,7 +78,7 @@ filtered_signal_low = butter_lowpass_filter(emg_signal, high_cutoff, sampling_ra
 filtered_signal_band = butter_highpass_filter(filtered_signal_low, low_cutoff, sampling_rate)
 
 ```
-![image](https://github.com/user-attachments/assets/f9c9e537-395a-4790-bb27-ca431dcdc490)
+![señalfil](https://github.com/user-attachments/assets/16f8cc78-984f-4097-a77e-5443b65000c4)
 
 ## Ventanamiento de la señal EMG
 Para el analisis de los pulsos generados por contracción muscular se pidió al sujeto de prueba que hiciera contracciones de manera periodica durante 30 segundos, esto nos permite analizar la señal de manera más facil, esta se divide en ventanas para analizar cada contracción individualmente, para esto se aplica una ventana Hamming en vez de una Hanning, debido a que reduce las fugas espectrales, tiene mejor supresión de lobulos laterales, y es mejor para señales periodicas, cada vetana se aplica en un periodo de aproximadamente 682ms para 44 ventanas, correspondiente a las 44 contracciones que se hicieron en 30 segundos. Posteriormente se aplica transformada de fourier (FFT) y tambien se calcula y gráfica la densidad espectral de potencia, por propositos de facilidad solo se mostrarán las ventanas 1, 22 y 44, además se calcula la frecuencia media, mediana y desviación estandar para cada una de las ventanas.
