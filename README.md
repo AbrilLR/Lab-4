@@ -1,4 +1,4 @@
-# Señales elecromiográficas EMG
+# Señales electromiográficas EMG
 ## Descripción
 
 ## Filtrado de la señal
