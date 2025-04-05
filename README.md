@@ -194,3 +194,44 @@ Para el analisis de la fátiga, normalmente se usa la frecuencia mediana, debido
  Herramienta estadística que se utiliza para determinar si existe una diferencia significativa entre dos conjuntos de datos o condiciones. Se basa en comparar dos hipótesis: la hipótesis nula, que plantea que no hay diferencia entre los grupos, y la hipótesis alternativa, que sugiere que sí hay una diferencia. 
  A través del cálculo de un estadístico de prueba y un valor p, se evalúa la probabilidad de que los resultados observados se deban al azar. Si el valor p es menor a un umbral típico (como 0.05), se rechaza la hipótesis nula y se concluye que la diferencia es estadísticamente significativa. Esta prueba permite evaluar si la actividad muscular ha cambiado significativamente entre el inicio y el final de una medición.
 
+```
+frecuencias_medias = np.array(frecuencias_medias)
+
+if len(frecuencias_medias) >= 10:
+    grupo_inicial = frecuencias_medias[:5]
+    grupo_final = frecuencias_medias[-5:]
+
+    t_stat, p_value = ttest_ind(grupo_inicial, grupo_final)
+
+    print("\n=== Prueba de Hipótesis (frecuencia media) ===")
+    print(f"Frecuencia Media Inicial: {np.mean(grupo_inicial):.2f} Hz")
+    print(f"Frecuencia Media Final: {np.mean(grupo_final):.2f} Hz")
+    print(f"Estadístico t: {t_stat:.3f}")
+    print(f"Valor p: {p_value:.4f}")
+
+    if p_value < 0.05:
+        print("→ Se rechaza la hipótesis nula: hay diferencia significativa entre el inicio y el final.")
+    else:
+        print("→ No se rechaza la hipótesis nula: no hay diferencia significativa entre el inicio y el final.")
+else:
+    print("No hay suficientes ventanas para realizar la prueba de hipótesis.")
+
+```
+
+
+### Requisitos 
+* Pyton 3.9.0 ó superior
+* Módulo de electromiografía AD8832
+* NI DAQ USB
+* Electrodos 
+### Librerias
+* Pandas
+* numpy
+* matplotlib
+* scipy.stats
+* nidaqmx
+* PyQt5 
+
+
+ 
+
