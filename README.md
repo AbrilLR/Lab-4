@@ -74,7 +74,7 @@ filtered_signal_band = butter_highpass_filter(filtered_signal_low, low_cutoff, s
 ```
 ![image](https://github.com/user-attachments/assets/f9c9e537-395a-4790-bb27-ca431dcdc490)
 
-# Ventana miento de la señal EMG
+## Ventanamiento de la señal EMG
 Para el analisis de los pulsos generados por contracción muscular se pidió al sujeto de prueba que hiciera contracciones de manera periodica durante 30 segundos, esto nos permite analizar la señal de manera más facil, esta se divide en ventanas para analizar cada contracción individualmente, para esto se aplica una ventana Hamming en vez de una Hanning, debido a que reduce las fugas espectrales, tiene mejor supresión de lobulos laterales, y es mejor para señales periodicas, cada vetana se aplica en un periodo de aproximadamente 682ms para 44 ventanas, correspondiente a las 44 contracciones que se hicieron en 30 segundos. Posteriormente se aplica transformada de fourier (FFT) y tambien se calcula y gráfica la densidad espectral de potencia, por propositos de facilidad solo se mostrarán las ventanas 1, 22 y 44, además se calcula la frecuencia media, mediana y desviación estandar para cada una de las ventanas.
 
 ```
