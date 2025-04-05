@@ -215,6 +215,7 @@ if len(frecuencias_medias) >= 10:
         print("No se rechaza la hipótesis nula: no hay diferencia significativa entre el inicio y el final.")
 
 ```
+Con base en esta prueba de hipotesis podemos concluir que apesar de que pueda haber diferencia entre las frecuencias mediananas en la prueba realizada anteriormente con todas las ventanas, la prueba de hipotesis no rechaza la hipotesis nula, por lo que a pesar de haber una diferencia en los datos, no es lo suficientemente grande para considerarse significativa, considerando la primera y la ultima contracción, por lo que la fatiga resulta ser muy leve y prácticamente imperceptible, aunque probablemente si se fuerza al sujeto a realizar demasiadas repeticiones hasta llegar al fallo muscular, la prueba pueda rechazar la hipotesis nula.
 
 
 ### Requisitos 
